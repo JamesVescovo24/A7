@@ -1,0 +1,67 @@
+from os import listdir
+from os.path import isfile, join, abspath
+
+common_env = Environment()
+common_env.Append(CXXFLAGS = '-std=c++14 -Wall -g -O0')
+common_env.Append(CFLAGS = '-std=gnu11')
+common_env.Append(YACCFLAGS = '-d')
+
+def sources (d, exts = ('.cc',)):
+	return [abspath(join(d, f)) for f in listdir(d) if isfile(join(d, f)) and f.endswith(exts)]
+
+catalogSrc = sources ('../Main/Catalog/source')
+bufferSrc = sources ('../Main/BufferMgr/source')
+recordSrc = sources ('../Main/Record/source')
+tableSrc = sources ('../Main/DatabaseTable/source')
+relOpSrc = sources ('../Main/RelOps/source')
+executionSrc = sources ('../Main/Execution/source')
+sqlSrc = sources ('../Main/SQL/source', ('.cc', '.y', '.l'))
+allSrc = [executionSrc, sqlSrc, tableSrc, recordSrc, catalogSrc, bufferSrc, relOpSrc]
+
+# NOTE: do not put quotes around these!  SCons scans these directories to
+# work out which headers each source file depends on, and a quoted path
+# names a directory that does not exist -- the build still works, but
+# nothing is ever rebuilt when you edit a header
+header_paths = Split("""
+	../Main/Catalog/headers
+	../Main/BufferMgr/headers
+	../Main/Execution/headers
+	../Main/Qunit/headers
+	../Main/Record/headers
+	../Main/DatabaseTable/headers
+	../Main/SQL/headers
+	../Main/RelOps/headers
+	../Main/OptTest/headers
+""")
+
+common_env.Append(CPPPATH = header_paths)
+
+print("""
+What do you want to build/clean?\n
+1. The database (sqlUnitTest: parses, checks, optimizes and prints the plan for each query)
+2. Optimizer unit tests (my tests, OptQUnit.cc)
+3. Stage 1 tests (yours, StudentQUnitStage1.cc: the optimizer)
+4. Stage 2 tests (yours, StudentQUnitStage2.cc: checkPlan)
+5. Stage 3 tests (yours, StudentQUnitStage3.cc: memoization)
+
+Add a "c" to build with clang++, as on Clear: for example, 3c
+""")
+
+ans = input("Select the module you want to build or clean. ").strip()
+
+if ans.endswith("c"):
+	common_env.Replace(CXX = "clang++")
+	ans = ans[:-1]
+
+if ans == "1":
+	print("\nOK, building the database.")
+	common_env.Program ('bin/sqlUnitTest', ['../Main/SQLTest/source/main.cc'] + allSrc)
+
+if ans == "2":
+	print("\nOK, building the optimizer unit tests.")
+	common_env.Program ('bin/optUnitTest', ['../Main/OptTest/source/OptQUnit.cc'] + allSrc)
+
+for stage in ("1", "2", "3"):
+	if ans == str (2 + int (stage)):
+		print("\nOK, building your Stage " + stage + " tests.")
+		common_env.Program ('bin/studentUnitTestStage' + stage, ['../Main/OptTest/source/StudentQUnitStage' + stage + '.cc'] + allSrc)
