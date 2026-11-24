@@ -1,0 +1,8 @@
+Stage 3: memoization.
+16. What is the key of the memo table? The LogicalOp a call returns has its predicates and its
+output schema baked into it, so a key that is only the set of tables is sound only if every call for
+the same set of tables asks for the same predicates and the same attributes. Is this the case?
+17. What is the value in the memo table?
+4
+18. When is the memo table created and emptied. What goes wrong if it survives from one query
+to the next?

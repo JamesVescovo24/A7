@@ -1,0 +1,11 @@
+Stage 2: the checker.
+11. A LogicalTableScan holds only its aliased input table. How is it matched to a (table, alias)
+pair of the FROM clause, and how is a scan of the un-aliased table, or a second scan of the same
+alias, detected?
+12. How are two predicates compared? Are they compared using their pointers, or by their string
+form (toString ())? Why does the choice matter for a plan built by someone else’s code?
+13. How is “exactly the attributes needed above it” computed for every op, top down, and what
+does the root need?
+14. How are the statistics recomputed and compared, and with what tolerance for doubles?
+15. What does the checker say about a plan that is correct but not optimal? For example, one that
+applies a selection at a join instead of at the scan below it?
