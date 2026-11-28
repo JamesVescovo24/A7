@@ -105,4 +105,26 @@ inline bool closeEnough (double a, double b, double rel = 1e-6) {
 	return fabs (a - b) <= rel * m;
 }
 
+inline vector <string> outputAttributes (const LogicalOpPtr &plan) {
+	vector <string> attributes;
+	for (const auto &attribute : plan->getOutputTable ()->getSchema ()->getAtts ())
+		attributes.push_back (attribute.first);
+	return attributes;
+}
+
+inline LogicalTableScan *findScan (const LogicalOpPtr &plan, const string &inputAttribute) {
+	if (auto scan = plan->toTableScan ()) {
+		for (const auto &attribute : scan->getInputTable ()->getSchema ()->getAtts ())
+			if (attribute.first == inputAttribute)
+				return scan;
+		return nullptr;
+	}
+	if (auto join = plan->toJoin ()) {
+		if (auto scan = findScan (join->getLeftInput (), inputAttribute))
+			return scan;
+		return findScan (join->getRightInput (), inputAttribute);
+	}
+	return nullptr;
+}
+
 #endif

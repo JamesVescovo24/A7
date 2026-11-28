@@ -1,0 +1,12 @@
+Baseline: all 13 cases exited 0. The Stage 2 checker XFAIL is recorded in case 8.
+Starting mutation-1: Omit topCNF attributes from child projection
+mutation-1: caught. Nonzero case exits: {4: 1}
+Starting mutation-2: Skip the final nonempty proper subset at each recursive join
+mutation-2: caught. Nonzero case exits: {7: 3, 13: 1}
+Starting mutation-3: Push cross-table disjunctions into leftCNF
+mutation-3: caught. Nonzero case exits: {2: 14, 4: 3, 8: 1, 10: 1, 12: 6}
+Starting mutation-4: Reverse the disjunction order before recursion
+mutation-4: caught. Nonzero case exits: {4: 1, 11: 5, 12: 6}
+Starting mutation-5: Omit right child cost from join candidate cost
+mutation-5: caught. Nonzero case exits: {2: 17, 5: 2, 7: 2, 8: 1, 10: 4, 12: 2, 13: 1}
+Restoration verified. All three workspace source files match their initial bytes.
